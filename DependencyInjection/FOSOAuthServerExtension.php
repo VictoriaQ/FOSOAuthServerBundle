@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Reference;
 
 class FOSOAuthServerExtension extends Extension
 {
@@ -72,6 +73,10 @@ class FOSOAuthServerExtension extends Extension
 
         if (!empty($config['authorize'])) {
             $this->loadAuthorize($config['authorize'], $container, $loader);
+        }
+        if (null !== $userProvider = $config['service']['user_provider']) {
+          $container->getDefinition($config['service']['storage'])
+            ->replaceArgument(4, new Reference($userProvider));
         }
     }
 
